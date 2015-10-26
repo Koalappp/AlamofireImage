@@ -264,7 +264,9 @@ extension UIImage {
 // MARK: - Core Image Filters
 
 extension UIImage {
-    /**
+
+
+	/**
         Returns a new version of the image using a CoreImage filter with the specified name and parameters.
 
         - parameter filterName:       The name of the CoreImage filter to use on the new image.
@@ -275,27 +277,30 @@ extension UIImage {
     public func af_imageWithAppliedCoreImageFilter(
         filterName: String,
         filterParameters: [String: AnyObject]? = nil) -> UIImage?
-    {
-        var image: CoreImage.CIImage? = CIImage
+	{
+		if #available(iOS 8.0, *) {
+			var image: CoreImage.CIImage? = CIImage
 
-        if image == nil, let CGImage = self.CGImage {
-            image = CoreImage.CIImage(CGImage: CGImage)
-        }
+			if image == nil, let CGImage = self.CGImage {
+				image = CoreImage.CIImage(CGImage: CGImage)
+			}
 
-        guard let coreImage = image else { return nil }
+			guard let coreImage = image else { return nil }
 
-        let context = CIContext(options: [kCIContextPriorityRequestLow: true])
+			let context = CIContext(options: [kCIContextPriorityRequestLow: true])
 
-        var parameters: [String: AnyObject] = filterParameters ?? [:]
-        parameters[kCIInputImageKey] = coreImage
+			var parameters: [String: AnyObject] = filterParameters ?? [:]
+			parameters[kCIInputImageKey] = coreImage
 
-        guard let filter = CIFilter(name: filterName, withInputParameters: parameters) else { return nil }
-        guard let outputImage = filter.outputImage else { return nil }
+			guard let filter = CIFilter(name: filterName, withInputParameters: parameters) else { return nil }
+			guard let outputImage = filter.outputImage else { return nil }
 
-        let cgImageRef = context.createCGImage(outputImage, fromRect: coreImage.extent)
+			let cgImageRef = context.createCGImage(outputImage, fromRect: coreImage.extent)
 
-        return UIImage(CGImage: cgImageRef, scale: scale, orientation: imageOrientation)
-    }
+			return UIImage(CGImage: cgImageRef, scale: scale, orientation: imageOrientation)
+		}
+		return nil
+	}
 }
 
 #endif

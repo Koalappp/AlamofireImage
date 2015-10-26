@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Alamofire
 import Foundation
 
 #if os(iOS) || os(tvOS) || os(watchOS)
@@ -86,7 +85,7 @@ public class ImageDownloader {
     /// The credential used for authenticating each download request.
     public private(set) var credential: NSURLCredential?
 
-    let sessionManager: Alamofire.Manager
+    let sessionManager: Manager
     let downloadPrioritization: DownloadPrioritization
     let maximumActiveDownloads: Int
 
@@ -161,7 +160,7 @@ public class ImageDownloader {
         maximumActiveDownloads: Int = 4,
         imageCache: ImageRequestCache? = AutoPurgingImageCache())
     {
-        self.sessionManager = Alamofire.Manager(configuration: configuration)
+        self.sessionManager = Manager(configuration: configuration)
         self.sessionManager.startRequestsImmediately = false
 
         self.downloadPrioritization = downloadPrioritization
