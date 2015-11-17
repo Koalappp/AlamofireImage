@@ -278,15 +278,16 @@ extension UIImage {
         filterName: String,
         filterParameters: [String: AnyObject]? = nil) -> UIImage?
 	{
+		var image: CoreImage.CIImage? = CIImage
+
+		if image == nil, let CGImage = self.CGImage {
+			image = CoreImage.CIImage(CGImage: CGImage)
+		}
+
+		guard let coreImage = image else { return nil }
+
+
 		if #available(iOS 8.0, *) {
-			var image: CoreImage.CIImage? = CIImage
-
-			if image == nil, let CGImage = self.CGImage {
-				image = CoreImage.CIImage(CGImage: CGImage)
-			}
-
-			guard let coreImage = image else { return nil }
-
 			let context = CIContext(options: [kCIContextPriorityRequestLow: true])
 
 			var parameters: [String: AnyObject] = filterParameters ?? [:]
@@ -299,7 +300,21 @@ extension UIImage {
 
 			return UIImage(CGImage: cgImageRef, scale: scale, orientation: imageOrientation)
 		}
-		return nil
+
+		let context = CIContext(options: nil)
+
+		var parameters: [String: AnyObject] = filterParameters ?? [:]
+		parameters[kCIInputImageKey] = coreImage
+
+		guard let filter = CIFilter(name: filterName) else { return nil }
+		filter.setDefaults()
+		filter.setValuesForKeysWithDictionary(parameters)
+
+		guard let outputImage = filter.outputImage else { return nil }
+
+		let cgImageRef = context.createCGImage(outputImage, fromRect: coreImage.extent)
+
+		return UIImage(CGImage: cgImageRef, scale: scale, orientation: imageOrientation)
 	}
 }
 

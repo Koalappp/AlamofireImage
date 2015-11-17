@@ -321,7 +321,7 @@ public struct BlurFilter: ImageFilter {
     /// The filter closure used to create the modified representation of the given image.
     public var filter: Image -> Image {
         return { image in
-            let parameters = ["inputRadius": self.blurRadius]
+            let parameters = [kCIInputRadiusKey: self.blurRadius]
             return image.af_imageWithAppliedCoreImageFilter("CIGaussianBlur", filterParameters: parameters) ?? image
         }
     }
