@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Alamofire
 import Foundation
 import UIKit
 
@@ -156,13 +155,13 @@ extension UIButton {
             )
 
             completion?(response)
-            setImage(image, forState: state)
+            setImage(image.imageWithRenderingMode(.AlwaysOriginal), forState: state)
 
             return
         }
 
         // Set the placeholder since we're going to have to download
-        if let placeholderImage = placeholderImage { self.setImage(placeholderImage, forState: state)  }
+        if let placeholderImage = placeholderImage { self.setImage(placeholderImage.imageWithRenderingMode(.AlwaysOriginal), forState: state)  }
 
         // Generate a unique download id to check whether the active request has changed while downloading
         let downloadID = NSUUID().UUIDString
@@ -185,7 +184,7 @@ extension UIButton {
                 }
 
                 if let image = response.result.value {
-                    strongSelf.setImage(image, forState: state)
+                    strongSelf.setImage(image.imageWithRenderingMode(.AlwaysOriginal), forState: state)
                 }
 
                 strongSelf.setImageRequestReceipt(nil, forState: state)
