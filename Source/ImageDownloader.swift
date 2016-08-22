@@ -28,9 +28,9 @@ import UIKit
 import Cocoa
 #endif
 
-/// The `RequestReceipt` is an object vended by the `ImageDownloader` when starting a download request. It can be used 
-/// to cancel active requests running on the `ImageDownloader` session. As a general rule, image download requests 
-/// should be cancelled using the `RequestReceipt` instead of calling `cancel` directly on the `request` itself. The 
+/// The `RequestReceipt` is an object vended by the `ImageDownloader` when starting a download request. It can be used
+/// to cancel active requests running on the `ImageDownloader` session. As a general rule, image download requests
+/// should be cancelled using the `RequestReceipt` instead of calling `cancel` directly on the `request` itself. The
 /// `ImageDownloader` is optimized to handle duplicate request scenarios as well as pending versus active downloads.
 public class RequestReceipt {
     /// The download request created by the `ImageDownloader`.
@@ -46,10 +46,10 @@ public class RequestReceipt {
 }
 
 /// The `ImageDownloader` class is responsible for downloading images in parallel on a prioritized queue. Incoming
-/// downloads are added to the front or back of the queue depending on the download prioritization. Each downloaded 
-/// image is cached in the underlying `NSURLCache` as well as the in-memory image cache that supports image filters. 
+/// downloads are added to the front or back of the queue depending on the download prioritization. Each downloaded
+/// image is cached in the underlying `NSURLCache` as well as the in-memory image cache that supports image filters.
 /// By default, any download request with a cached image equivalent in the image cache will automatically be served the
-/// cached image representation. Additional advanced features include supporting multiple image filters and completion 
+/// cached image representation. Additional advanced features include supporting multiple image filters and completion
 /// handlers for a single request.
 public class ImageDownloader {
     /// The completion handler closure used when an image download completes.
@@ -99,12 +99,12 @@ public class ImageDownloader {
     var responseHandlers: [String: ResponseHandler] = [:]
 
     private let synchronizationQueue: dispatch_queue_t = {
-        let name = String(format: "com.alamofire.imagedownloader.synchronizationqueue-%08%08", arc4random(), arc4random())
+        let name = String(format: "com.alamofire.imagedownloader.synchronizationqueue-%08x%08x", arc4random(), arc4random())
         return dispatch_queue_create(name, DISPATCH_QUEUE_SERIAL)
     }()
 
     private let responseQueue: dispatch_queue_t = {
-        let name = String(format: "com.alamofire.imagedownloader.responsequeue-%08%08", arc4random(), arc4random())
+        let name = String(format: "com.alamofire.imagedownloader.responsequeue-%08x%08x", arc4random(), arc4random())
         return dispatch_queue_create(name, DISPATCH_QUEUE_CONCURRENT)
     }()
 
@@ -115,7 +115,7 @@ public class ImageDownloader {
 
     /**
         Creates a default `NSURLSessionConfiguration` with common usage parameter values.
-    
+
         - returns: The default `NSURLSessionConfiguration` instance.
     */
     public class func defaultURLSessionConfiguration() -> NSURLSessionConfiguration {
@@ -148,10 +148,10 @@ public class ImageDownloader {
     }
 
     /**
-        Initializes the `ImageDownloader` instance with the given configuration, download prioritization, maximum active 
+        Initializes the `ImageDownloader` instance with the given configuration, download prioritization, maximum active
         download count and image cache.
 
-        - parameter configuration:          The `NSURLSessionConfiguration` to use to create the underlying Alamofire 
+        - parameter configuration:          The `NSURLSessionConfiguration` to use to create the underlying Alamofire
                                             `Manager` instance.
         - parameter downloadPrioritization: The download prioritization of the download queue. `.FIFO` by default.
         - parameter maximumActiveDownloads: The maximum number of active downloads allowed at any given time.
@@ -244,9 +244,9 @@ public class ImageDownloader {
         callers.
 
         - parameter URLRequest:     The URL request.
-        - parameter receiptID:      The `identifier` for the `RequestReceipt` returned. Defaults to a new, randomly 
+        - parameter receiptID:      The `identifier` for the `RequestReceipt` returned. Defaults to a new, randomly
                                     generated UUID.
-        - parameter filter:         The image filter to apply to the image after the download is complete. Defaults 
+        - parameter filter:         The image filter to apply to the image after the download is complete. Defaults
                                     to `nil`.
         - parameter progress:       The closure to be executed periodically during the lifecycle of the request.
                                     Defaults to `nil`.
@@ -468,7 +468,7 @@ public class ImageDownloader {
                     let error: NSError = {
                         let failureReason = "ImageDownloader cancelled URL request: \(URLRequest.URLString)"
                         let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
-                        return NSError(domain: Error.Domain, code: NSURLErrorCancelled, userInfo: userInfo)
+                        return NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled, userInfo: userInfo)
                     }()
 
                     return Response(request: URLRequest, response: nil, data: nil, result: .Failure(error))
